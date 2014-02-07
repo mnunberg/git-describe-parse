@@ -1,6 +1,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef _WIN32
+#define popen _popen
+#define pclose _pclose
+#endif
 
 static void find_delim(char *s, char **res, int *ix)
 {
@@ -39,7 +43,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "git describe closed stream\n");
         exit(EXIT_FAILURE);
     }
-    fclose(po);
+    pclose(po);
     buflen = strlen(vbuf);
     vbuf[buflen-2] = '\0';
     buflen -= 1;
