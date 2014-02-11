@@ -58,6 +58,10 @@ my ($v_maj, $v_min, $v_patch, $extras) =
     ($version =~ m/(\d+)\.(\d+)\.(\d+)(-(.+))?/);
 
 my $xyz_version = join('.', $v_maj, $v_min, $v_patch);
+if ($extras) {
+    # Strip leading '-' from extras
+    $extras =~ s/^[+-]+//g;
+}
 
 if ($PrintBase) {
     print "$version\n";
