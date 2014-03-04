@@ -89,18 +89,14 @@ if ($PrintVersion) {
 
 if ($DEB) {
     my $vbase = $xyz_version;
-    if ($ncommits || $extras) {
-        $vbase .= "~";
-    }
-    if ($ncommits) {
-        $vbase .= "r$ncommits+$sha";
-    }
     if ($extras) {
-        if ($ncommits) {
-            $vbase .= "~";
-        }
-        $vbase .= $extras;
+        $vbase .= "~$extras";
     }
+
+    if ($ncommits) {
+        $vbase .= "+r$ncommits$sha";
+    }
+
     print "$vbase\n";
 }
 
