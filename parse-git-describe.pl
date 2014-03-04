@@ -140,7 +140,12 @@ if ($RPM) {
 }
 
 if ($TAR) {
-    my $copy = $output;
+    my $copy;
+    if (!$ncommits) {
+        $copy = $version;
+    } else {
+        $copy = $output;
+    }
     $copy =~ s/-/_/g;
     print "$copy\n";
 }
