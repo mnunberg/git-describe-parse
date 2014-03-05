@@ -13,7 +13,9 @@ my $rv = GetOptions(
     'ncommits|n' => \my $PrintCount,
     'sha|s' => \my $PrintSHA,
     'force|f' => \my $Force,
-    'rpm' => \my $RPM,
+    'rpm-full' => \my $RPM_FULL,
+    'rpm-ver' => \my $RPM_VER,
+    'rpm-rel' => \my $RPM_REL,
     'deb' => \my $DEB,
     'tar' => \my $TAR,
     'help|h' => \my $WantHelp);
@@ -28,7 +30,9 @@ my $HELPTEXT =
     -v --version    Print base x.y.z version
     -P --pre-release Print prerelease tag, e.g. 'beta'
        --deb        Print proper "Debian" version number
-       --rpm        Print proper "RPM" version number
+       --rpm-full   Print proper "RPM" version number
+       --rpm-ver    Print RPM "Version" string
+       --rpm-rel    Print RPM "Release" string
        --tar        Print proper "Tarball" name
 EOF
 
@@ -100,8 +104,9 @@ if ($DEB) {
     print "$vbase\n";
 }
 
-if ($RPM) {
+sub get_rpm_versions {
     my $vbase = $xyz_version;
+    my $reltag;
 
     # Figure out the release tag.
     # If we're a pre-release AND a snapshot, then the build number goes at the end.
@@ -118,21 +123,35 @@ if ($RPM) {
         }
     }
 
-    $vbase .= "-$relno";
+
+    $reltag = "$relno";
 
     # Pre-release, no commits
     if ($extras) {
         if ($ncommits) {
-            $vbase .= ".r${ncommits}GIT${sha}";
+            $reltag .= ".r${ncommits}GIT${sha}";
         } else {
-            $vbase .= ".0";
+            $reltag .= ".0";
         }
-        $vbase .= ".$extras";
+        $reltag .= ".$extras";
     } elsif ($ncommits) {
         # No extras. Do we still have something here?
-        $vbase .= ".r${ncommits}GIT${sha}.SP";
+        $reltag .= ".r${ncommits}GIT${sha}.SP";
     }
+    return ($vbase, $reltag);
+}
+
+if ($RPM_FULL) {
+    my ($vbase,$rel) = get_rpm_versions();
+    print "$vbase-$rel\n";
+}
+if ($RPM_VER) {
+    my ($vbase,$rel) = get_rpm_versions();
     print "$vbase\n";
+}
+if ($RPM_REL) {
+    my ($vbase,$rel) = get_rpm_versions();
+    print "$rel\n";
 }
 
 if ($TAR) {
