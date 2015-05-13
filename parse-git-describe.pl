@@ -101,6 +101,8 @@ if ($DEB) {
         $vbase .= "+r$ncommits$sha";
     }
 
+    $vbase .= "-1";
+
     print "$vbase\n";
 }
 
